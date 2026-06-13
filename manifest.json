@@ -9,13 +9,13 @@
   "theme_color": "#000509",
   "icons": [
     {
-      "src": "PH_I_icon_192_.png",
+      "src": "PH_I icon 192_.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "PH_I_icon_512_.png",
+      "src": "PH_I icon 512_.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
