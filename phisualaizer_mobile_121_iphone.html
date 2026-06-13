@@ -1,0 +1,1268 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PHISUALAIZER">
+<link rel="apple-touch-icon" href="ph_icon_192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000509">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--f:'Barlow Condensed',sans-serif;}
+
+html,body{
+  width:100%;height:100%;
+  background:#000509;
+  overflow:hidden;
+  touch-action:none;
+}
+
+@media (orientation: portrait) {
+  body {
+    transform: rotate(90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    position: fixed;
+    top: 0;
+    left: 100%;
+  }
+}
+
+/* ===== MAIN LAYOUT ===== */
+#layout{
+  display:flex;
+  width:100%;
+  height:100%;
+  position:relative;
+}
+
+/* ===== LEFT PANEL ===== */
+#left{
+  width:140px;
+  min-width:140px;
+  height:100%;
+  background:rgba(0,3,10,0.97);
+  border-right:0.5px solid rgba(255,255,255,0.07);
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:8px 6px;
+  overflow-y:auto;
+  z-index:10;
+}
+
+/* ===== CENTER (VISUAL) ===== */
+#center{
+  flex:1;
+  position:relative;
+  overflow:hidden;
+}
+#c{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* ===== RIGHT PANEL (COMBO) ===== */
+#right{
+  width:80px;
+  min-width:80px;
+  height:100%;
+  background:rgba(0,2,8,0.97);
+  border-left:0.5px solid rgba(255,255,255,0.07);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:8px 6px;
+  z-index:10;
+}
+
+/* ===== BUTTONS ===== */
+.btn{
+  background:rgba(255,255,255,0.06);
+  border:0.5px solid rgba(255,255,255,0.14);
+  color:#777;
+  border-radius:4px;
+  padding:7px 6px;
+  font-size:10px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:var(--f);
+  letter-spacing:1px;
+  transition:all 0.15s;
+  width:100%;
+  text-align:center;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:manipulation;
+}
+.btn:active{background:rgba(255,255,255,0.18);}
+.btn.on{border-color:rgba(255,255,255,0.45);color:#fff;}
+.btn.stop-on{border-color:#ff4444;color:#ff4444;}
+
+/* STOP button */
+#bst{font-size:12px;font-weight:700;letter-spacing:2px;}
+
+/* ===== CAMERA SLIDERS ===== */
+.cam-block{width:100%;margin-top:2px;}
+.cam-lbl{
+  font-family:var(--f);
+  font-size:8px;
+  font-weight:600;
+  letter-spacing:1.5px;
+  color:rgba(255,255,255,0.28);
+  text-transform:uppercase;
+  display:block;
+  margin-bottom:2px;
+}
+.cam-row{
+  display:flex;
+  align-items:center;
+  gap:3px;
+  margin-bottom:12px;
+}
+.cam-slider{
+  flex:1;
+  height:2px;
+  cursor:pointer;
+  accent-color:#fff;
+  min-width:0;
+}
+.cam-val{
+  font-family:var(--f);
+  font-size:8px;
+  color:rgba(255,255,255,0.3);
+  width:28px;
+  text-align:right;
+  flex-shrink:0;
+}
+
+/* ===== AUDIO SECTION ===== */
+#audioSection{
+  margin-top:auto;
+  width:100%;
+  border-top:0.5px solid rgba(255,255,255,0.07);
+  padding-top:6px;
+}
+#dropzone{
+  border:1px dashed rgba(255,255,255,0.18);
+  border-radius:4px;
+  padding:5px 4px;
+  font-family:var(--f);
+  font-size:8px;
+  color:rgba(255,255,255,0.35);
+  cursor:pointer;
+  text-align:center;
+  letter-spacing:0.5px;
+  margin-bottom:4px;
+  touch-action:manipulation;
+}
+#dropzone.loaded{border-color:rgba(100,255,150,0.5);color:#88ffaa;}
+#fileinput{display:none;}
+#bplay{margin-bottom:4px;}
+#timecode{
+  font-family:var(--f);
+  font-size:8px;
+  color:rgba(255,255,255,0.25);
+  letter-spacing:0.5px;
+  text-align:center;
+  display:block;
+  margin-bottom:4px;
+}
+#vubars{
+  display:flex;
+  align-items:flex-end;
+  gap:1px;
+  height:12px;
+  width:100%;
+  margin-bottom:4px;
+}
+.vubar{width:100%;background:rgba(255,255,255,0.15);border-radius:1px;transition:height 0.05s;}
+.vol-row{display:flex;align-items:center;gap:3px;}
+.vol-lbl{font-family:var(--f);font-size:8px;color:rgba(255,255,255,0.25);letter-spacing:1px;flex-shrink:0;}
+#volslider{flex:1;height:2px;cursor:pointer;accent-color:#fff;}
+
+/* ===== COMBO BUTTONS ===== */
+.combo-lbl{
+  font-family:var(--f);
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:3px;
+  color:rgba(255,255,255,0.25);
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+.cbtn{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.18);
+  color:#888;
+  border-radius:6px;
+  width:62px;
+  height:52px;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:2px;
+  cursor:pointer;
+  font-family:var(--f);
+  transition:all 0.1s;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:manipulation;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.cbtn:active{background:rgba(255,255,255,0.15);}
+.cbtn.active{
+  background:rgba(255,255,255,0.22);
+  border-color:rgba(255,255,255,0.7);
+  color:#fff;
+  box-shadow:0 0 10px rgba(255,255,255,0.25);
+}
+#cb_CHARA{
+  color:#ffcc44;
+  border-color:rgba(255,200,50,0.45);
+  font-size:9px;
+  letter-spacing:1px;
+}
+#cb_CHARA.active{
+  background:rgba(255,200,50,0.2);
+  border-color:#ffcc44;
+  box-shadow:0 0 12px rgba(255,200,50,0.4);
+}
+
+/* ===== CONTROL PANEL OVERLAY (bottom, semi-transparent) ===== */
+#ctrlOverlay{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  z-index:100;
+  background:rgba(0,4,12,0.50);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  border-top:0.5px solid rgba(255,255,255,0.12);
+  transform:translateY(100%);
+  transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);
+  max-height:65vh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+#ctrlOverlay.open{transform:translateY(0);}
+
+/* Close button */
+#closeCtrl{
+  position:sticky;
+  top:0;
+  right:0;
+  float:right;
+  background:rgba(255,255,255,0.1);
+  border:0.5px solid rgba(255,255,255,0.2);
+  color:#fff;
+  border-radius:50%;
+  width:26px;
+  height:26px;
+  font-size:14px;
+  cursor:pointer;
+  font-family:var(--f);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:6px 8px 0 0;
+  z-index:110;
+  touch-action:manipulation;
+  flex-shrink:0;
+}
+
+/* Panel header */
+#panelHeader{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 8px 4px;
+  flex-wrap:wrap;
+  position:sticky;
+  top:0;
+  background:rgba(0,4,12,0.70);
+  z-index:105;
+}
+#panelLogo{
+  font-family:var(--f);
+  font-size:13px;
+  font-weight:600;
+  color:#fff;
+  letter-spacing:4px;
+}
+.pbtn{
+  background:rgba(255,255,255,0.06);
+  border:0.5px solid rgba(255,255,255,0.14);
+  color:#777;
+  border-radius:3px;
+  padding:3px 7px;
+  font-size:9px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:var(--f);
+  letter-spacing:1px;
+  transition:all 0.12s;
+  user-select:none;
+  touch-action:manipulation;
+}
+.pbtn.on{border-color:rgba(255,255,255,0.45);color:#fff;}
+
+/* Light table */
+#lightPanel{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:720px;}
+th{
+  font-size:8px;
+  font-weight:600;
+  letter-spacing:1.2px;
+  color:rgba(255,255,255,0.28);
+  font-family:var(--f);
+  padding:4px 3px 3px;
+  text-align:center;
+  border-bottom:0.5px solid rgba(255,255,255,0.08);
+  text-transform:uppercase;
+}
+th.lh{text-align:left;padding-left:8px;}
+td{padding:3px 3px;text-align:center;border-bottom:0.5px solid rgba(255,255,255,0.04);}
+td.lc{text-align:left;padding-left:8px;}
+.lname{font-size:10px;font-family:var(--f);font-weight:600;letter-spacing:0.5px;white-space:nowrap;}
+.tbtn{
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid rgba(255,255,255,0.1);
+  color:#555;
+  border-radius:3px;
+  padding:2px 5px;
+  font-size:8px;
+  font-weight:600;
+  letter-spacing:0.5px;
+  cursor:pointer;
+  font-family:var(--f);
+  transition:all 0.12s;
+  text-transform:uppercase;
+  touch-action:manipulation;
+}
+.tbtn.on{color:#fff;border-color:rgba(255,255,255,0.4);}
+.pslider{width:56px;height:2px;cursor:pointer;vertical-align:middle;accent-color:#fff;}
+.pval{font-size:8px;color:rgba(255,255,255,0.3);font-family:var(--f);width:20px;display:inline-block;text-align:right;}
+select.syncsel{
+  background:rgba(255,255,255,0.06);
+  border:0.5px solid rgba(255,255,255,0.12);
+  color:#777;
+  border-radius:3px;
+  padding:2px 2px;
+  font-size:8px;
+  font-family:var(--f);
+  cursor:pointer;
+  outline:none;
+}
+select.syncsel option{background:#000a1b;}
+
+/* PARTICLE section */
+.psep{border-top:0.5px solid rgba(255,255,255,0.08);}
+#particleToggleRow{
+  padding:4px 8px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+#particleToggleRow span{
+  font-family:var(--f);
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:2px;
+  color:rgba(255,255,255,0.35);
+  text-transform:uppercase;
+}
+#particleBody{display:none;}
+#particleBody.open{display:table-row-group;}
+
+/* Disclaimer */
+#disclaimer{
+  font-family:var(--f);
+  font-size:8px;
+  color:rgba(255,255,255,0.2);
+  letter-spacing:0.5px;
+  text-align:center;
+  padding:4px;
+}
+</style>
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<div id="layout">
+  <!-- LEFT PANEL -->
+  <div id="left">
+    <button class="btn" id="bctrl" onclick="toggleCtrl()">CONTROL</button>
+    <button class="btn stop-on" id="bst" onclick="togStop()">STOP</button>
+    <button class="btn" id="bsl" onclick="togSlow()">SLOW</button>
+
+    <div style="height:0.5px;background:rgba(255,255,255,0.07);margin:2px 0;"></div>
+
+    <!-- Camera -->
+    <div class="cam-block">
+      <span class="cam-lbl">CAMERA</span>
+      <div class="cam-row">
+        <span style="font-family:var(--f);font-size:7px;color:rgba(255,255,255,0.22);width:26px;flex-shrink:0;">ORBIT</span>
+        <input class="cam-slider" type="range" min="-180" max="180" step="1" value="0"
+          oninput="CAM.orbit=+this.value;updateCamera();document.getElementById('vorbit').textContent=this.value+'deg'">
+        <span class="cam-val" id="vorbit">0deg</span>
+      </div>
+      <div class="cam-row">
+        <span style="font-family:var(--f);font-size:7px;color:rgba(255,255,255,0.22);width:26px;flex-shrink:0;">DIST</span>
+        <input class="cam-slider" type="range" min="4" max="40" step="0.5" value="14"
+          oninput="CAM.dist=+this.value;updateCamera();document.getElementById('vdist').textContent=(+this.value).toFixed(1)">
+        <span class="cam-val" id="vdist">14.0</span>
+      </div>
+      <div class="cam-row">
+        <span style="font-family:var(--f);font-size:7px;color:rgba(255,255,255,0.22);width:26px;flex-shrink:0;">HGT</span>
+        <input class="cam-slider" type="range" min="-8" max="16" step="0.5" value="0"
+          oninput="CAM.height=+this.value;updateCamera();document.getElementById('vheight').textContent=(+this.value).toFixed(1)">
+        <span class="cam-val" id="vheight">0.0</span>
+      </div>
+      <div class="cam-row">
+        <span style="font-family:var(--f);font-size:7px;color:rgba(255,255,255,0.22);width:26px;flex-shrink:0;">FOV</span>
+        <input class="cam-slider" type="range" min="30" max="110" step="1" value="65"
+          oninput="CAM.fov=+this.value;updateCamera();document.getElementById('vfov').textContent=this.value+'deg'">
+        <span class="cam-val" id="vfov">65deg</span>
+      </div>
+      <button class="btn" onclick="resetCamera()" style="font-size:9px;padding:4px 6px;">RESET CAM</button>
+    </div>
+
+    <!-- Audio -->
+    <div id="audioSection">
+      <div id="dropzone" onclick="document.getElementById('fileinput').click()">> DROP / FILE</div>
+      <input type="file" id="fileinput" accept="audio/*" onchange="loadAudioFile(this.files[0])">
+      <button class="btn" id="bplay" onclick="togglePlay()" disabled>PLAY</button>
+      <span id="timecode">0:00 / 0:00</span>
+      <div id="vubars"></div>
+      <div class="vol-row">
+        <span class="vol-lbl">VOL</span>
+        <input type="range" id="volslider" min="0" max="1" step="0.01" value="0.8"
+          style="flex:1;height:2px;cursor:pointer;accent-color:#fff;"
+          oninput="setVolume(this.value)">
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER (VISUAL) -->
+  <div id="center">
+    <canvas id="c"></canvas>
+  </div>
+
+  <!-- RIGHT PANEL (COMBO) -->
+  <div id="right">
+    <span class="combo-lbl">COMBO</span>
+    <button class="cbtn" id="cb_C"
+      ontouchstart="event.preventDefault();comboPress('C')"
+      onmousedown="comboPress('C')">C1</button>
+    <button class="cbtn" id="cb_G"
+      ontouchstart="event.preventDefault();comboPress('G')"
+      onmousedown="comboPress('G')">C2</button>
+    <button class="cbtn" id="cb_CH"
+      ontouchstart="event.preventDefault();comboPress('CH')"
+      onmousedown="comboPress('CH')">C3</button>
+    <button class="cbtn" id="cb_CHARA"
+      ontouchstart="event.preventDefault();comboPress('CHARA')"
+      onmousedown="comboPress('CHARA')">C4</button>
+  </div>
+</div>
+
+<!-- CONTROL OVERLAY PANEL (bottom, semi-transparent) -->
+<div id="ctrlOverlay">
+  <div id="panelHeader">
+    <span id="panelLogo">PHISUALAIZER</span>
+    <button class="pbtn on" id="pb_L1" onclick="tog('L1')" style="border-color:#ff6633">L1 CEIL</button>
+    <button class="pbtn on" id="pb_L2" onclick="tog('L2')" style="border-color:#ff88cc">L2 WALL</button>
+    <button class="pbtn on" id="pb_L3" onclick="tog('L3')" style="border-color:#ffee44">L3 FLOOR</button>
+    <button class="pbtn" id="pb_L4" onclick="tog('L4')" style="border-color:#44aaff">L4 LEFT</button>
+    <button class="pbtn" id="pb_L5" onclick="tog('L5')" style="border-color:#44aaff">L5 RIGHT</button>
+    <button class="pbtn" id="pb_L6" onclick="tog('L6')" style="border-color:#44ff88">L6 MV</button>
+    <button id="closeCtrl" onclick="toggleCtrl()">X</button>
+  </div>
+
+  <div id="lightPanel">
+    <table>
+      <thead>
+        <tr>
+          <th class="lh">LIGHT</th>
+          <th>ON</th>
+          <th>LENGTH</th>
+          <th>SPEED<br><button class="tbtn" id="syncbtn_spd" style="margin-top:1px" onclick="toggleSyncLock('spd')">SYNC</button></th>
+          <th>SPREAD<br><button class="tbtn" id="syncbtn_br" style="margin-top:1px" onclick="toggleSyncLock('br')">SYNC</button></th>
+          <th>HUE<br><button class="tbtn" id="syncbtn_hue" style="margin-top:1px" onclick="toggleSyncLock('hue')">SYNC</button></th>
+          <th>BRIGHT<br><button class="tbtn" id="syncbtn_bright" style="margin-top:1px" onclick="toggleSyncLock('bright')">SYNC</button></th>
+          <th>BLINK<br><button class="tbtn" id="syncbtn_blink" style="margin-top:1px" onclick="toggleSyncLock('blink')">SYNC</button></th>
+
+          <th>GROUP</th>
+          <th>AUTO</th>
+        </tr>
+      </thead>
+      <tbody id="ptable"></tbody>
+    </table>
+
+    <!-- PARTICLE -->
+    <table class="psep">
+      <thead>
+        <tr id="particleToggleRow">
+          <th class="lh" colspan="11" style="text-align:left;padding:4px 8px;">
+            <span style="font-family:var(--f);font-size:9px;font-weight:600;letter-spacing:2px;color:rgba(255,255,255,0.35);">PARTICLE</span>
+            <button class="tbtn" id="pxToggleBtn" onclick="toggleParticle()" style="margin-left:6px;">[+]</button>
+          </th>
+        </tr>
+        <tr id="pxHead" style="display:none;">
+          <th class="lh">PARTICLE</th>
+          <th>ON</th>
+          <th>COUNT</th>
+          <th>SPEED</th>
+          <th>SIZE</th>
+          <th>SPREAD</th>
+          <th>BRIGHT</th>
+          <th colspan="4"></th>
+        </tr>
+      </thead>
+      <tbody id="pxtable"></tbody>
+    </table>
+  </div>
+
+  <div id="disclaimer">PHISUALAIZER v1.2.1 - Unofficial fan-made project. Not affiliated with Phish or CK5.</div>
+</div>
+
+<script>
+// ===== CANVAS SETUP =====
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setClearColor(0x000a1b, 1);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x000a1b, 0.009);
+const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 200);
+camera.position.set(0, 0, 14);
+camera.lookAt(0, 2, 0);
+
+function onResize(){
+  const w = canvas.offsetWidth;
+  const h = canvas.offsetHeight;
+  if(w===0||h===0) return;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', ()=>{ setTimeout(onResize,100); });
+setTimeout(onResize, 100);
+
+// ===== CAMERA CONTROL =====
+const CAM = {orbit:0, dist:14, height:0, fov:65};
+function updateCamera(){
+  const rad = CAM.orbit * (Math.PI/180);
+  camera.position.set(
+    Math.sin(rad)*CAM.dist,
+    CAM.height,
+    Math.cos(rad)*CAM.dist
+  );
+  camera.lookAt(0, 2, 0);
+  camera.fov = CAM.fov;
+  camera.updateProjectionMatrix();
+}
+function resetCamera(){
+  CAM.orbit=0; CAM.dist=14; CAM.height=0; CAM.fov=65;
+  updateCamera();
+  document.querySelector('#left input[oninput*="orbit"]').value=0;
+  document.querySelector('#left input[oninput*="dist"]').value=14;
+  document.querySelector('#left input[oninput*="height"]').value=0;
+  document.querySelector('#left input[oninput*="fov"]').value=65;
+  document.getElementById('vorbit').textContent='0deg';
+  document.getElementById('vdist').textContent='14.0';
+  document.getElementById('vheight').textContent='0.0';
+  document.getElementById('vfov').textContent='65deg';
+}
+
+// ===== STATE =====
+let slow = false, stop = true;
+const lOn = {L1:true,L2:true,L3:true,L4:false,L5:false,L6:false};
+
+function tog(k){
+  lOn[k]=!lOn[k];
+  // left panel header buttons
+  const pb=document.getElementById('pb_'+k);
+  if(pb) pb.classList.toggle('on',lOn[k]);
+  // table buttons
+  const tb=document.getElementById('ton'+k);
+  if(tb) tb.classList.toggle('on',lOn[k]);
+}
+function togSlow(){slow=!slow;document.getElementById('bsl').classList.toggle('on',slow);}
+function togStop(){stop=!stop;const b=document.getElementById('bst');b.classList.toggle('stop-on',stop);b.textContent=stop?'STOP':'START';}
+
+// ===== CONTROL OVERLAY TOGGLE =====
+let ctrlOpen = false;
+function toggleCtrl(){
+  ctrlOpen = !ctrlOpen;
+  document.getElementById('ctrlOverlay').classList.toggle('open', ctrlOpen);
+  document.getElementById('bctrl').classList.toggle('on', ctrlOpen);
+}
+
+// ===== PARTICLE TOGGLE =====
+let particleOpen = false;
+function toggleParticle(){
+  particleOpen = !particleOpen;
+  document.getElementById('pxToggleBtn').textContent = particleOpen ? '[-]' : '[+]';
+  document.getElementById('pxHead').style.display = particleOpen ? '' : 'none';
+  const tbody = document.getElementById('pxtable');
+  tbody.style.display = particleOpen ? '' : 'none';
+}
+
+// ===== LIGHT PARAMS =====
+const LP = {
+  L1:{len:30,spd:0.001,br:1.1,hue:233,bright:0.15,blink:0,sync:'NONE',syncGroup:1.0,auto:false,_autoT:0},
+  L2:{len:14,spd:0.005,br:1.0,hue:213,bright:0.15,blink:0,sync:'NONE',syncGroup:1.0,auto:false,_autoT:0},
+  L3:{len:8, spd:0.007,br:1.0,hue:208,bright:0.20,blink:0,sync:'NONE',syncGroup:1.0,auto:false,_autoT:0},
+  L4:{len:12,spd:0.004,br:1.0,hue:200,bright:1.0, blink:0,sync:'NONE',syncGroup:0,  auto:false,_autoT:0},
+  L5:{len:12,spd:0.004,br:1.0,hue:210,bright:1.0, blink:0,sync:'NONE',syncGroup:0,  auto:false,_autoT:0},
+  L6:{len:14,spd:0.008,br:1.2,hue:130,bright:1.2, blink:0,sync:'NONE',syncGroup:0,  auto:false,_autoT:0},
+};
+const AUTO_TARGET = {};
+Object.keys(LP).forEach(k=>{AUTO_TARGET[k]={...LP[k]};});
+
+const LIGHT_DEFS = {
+  L1:{pos:[0,10,0],  beamLen:12,label:'L1 CEILING',count:6,spread:10,initRot:[0,0,0],sweepAxes:'xz',upward:false},
+  L2:{pos:[0,4,0],   beamLen:12,label:'L2 WALL-HI',count:6,spread:10,initRot:[0,0,0],sweepAxes:'xy',upward:false},
+  L3:{pos:[0,-7,0],  beamLen:14,label:'L3 FLOOR',  count:6,spread:10,initRot:[0,0,0],sweepAxes:'xy',upward:true},
+  L4:{pos:[-10,2,0], beamLen:12,label:'L4 LEFT',   count:3,spread:6, initRot:[0,0,0],sweepAxes:'yz',upward:false,sideRight:true},
+  L5:{pos:[10,2,0],  beamLen:12,label:'L5 RIGHT',  count:3,spread:6, initRot:[0,0,0],sweepAxes:'yz',upward:false,sideLeft:true},
+  L6:{pos:[0,7,-6],  beamLen:14,label:'L6 MV',     count:2,spread:5, initRot:[0,0,0],sweepAxes:'xy',upward:false,forward:true},
+};
+const COLORS = {L1:'#ff6633',L2:'#ff88cc',L3:'#ffee44',L4:'#44aaff',L5:'#44aaff',L6:'#44ff88'};
+const KEYS = Object.keys(LP);
+
+// ===== PARTICLE DEFINITIONS =====
+const PX_DEFS = [
+  {id:'FLURRY',color:'#aaddff',label:'* FLURRY',count:200,spd:0.6, size:0.06,spread:12,bright:0.55,on:true},
+  {id:'SPARKS',color:'#ffcc44',label:'* SPARKS',count:120,spd:1.2, size:0.05,spread:10,bright:0.7, on:false},
+  {id:'RAIN',  color:'#88ccff',label:'* RAIN',  count:150,spd:0.8, size:0.04,spread:14,bright:0.45,on:false},
+  {id:'ORBIT', color:'#ff88ff',label:'* ORBIT', count:100,spd:0.5, size:0.07,spread:8, bright:0.6, on:false},
+  {id:'BURST', color:'#ffaa44',label:'* BURST', count:80, spd:1.5, size:0.08,spread:6, bright:0.8, on:false},
+  {id:'DRIFT', color:'#aaffcc',label:'* DRIFT', count:180,spd:0.3, size:0.09,spread:16,bright:0.35,on:false},
+];
+const pxMeshes = {};
+const pxData = {};
+
+// Generate particle UI
+const pxtbody = document.getElementById('pxtable');
+pxtbody.style.display = 'none';
+PX_DEFS.forEach(def=>{
+  const tr = document.createElement('tr');
+  tr.innerHTML=`
+    <td class="lc"><span class="lname" style="color:${def.color}">${def.label}</span></td>
+    <td><button class="tbtn${def.on?' on':''}" id="pxon${def.id}" onclick="togPX('${def.id}')">${def.on?'ON':'OFF'}</button></td>
+    <td><input class="pslider" type="range" min="20" max="600" step="10" value="${def.count}"
+      oninput="getPX('${def.id}').count=+this.value;rebuildPX('${def.id}');document.getElementById('vpcnt${def.id}').textContent=this.value">
+      <span class="pval" id="vpcnt${def.id}">${def.count}</span></td>
+    <td><input class="pslider" type="range" min="0.05" max="4" step="0.05" value="${def.spd}"
+      oninput="getPX('${def.id}').spd=+this.value;document.getElementById('vpspd${def.id}').textContent=(+this.value).toFixed(2)">
+      <span class="pval" id="vpspd${def.id}">${def.spd.toFixed(2)}</span></td>
+    <td><input class="pslider" type="range" min="0.01" max="0.4" step="0.01" value="${def.size}"
+      oninput="getPX('${def.id}').size=+this.value;rebuildPX('${def.id}');document.getElementById('vpsize${def.id}').textContent=(+this.value).toFixed(2)">
+      <span class="pval" id="vpsize${def.id}">${def.size.toFixed(2)}</span></td>
+    <td><input class="pslider" type="range" min="1" max="24" step="0.5" value="${def.spread}"
+      oninput="getPX('${def.id}').spread=+this.value;rebuildPX('${def.id}');document.getElementById('vpspread${def.id}').textContent=(+this.value).toFixed(1)">
+      <span class="pval" id="vpspread${def.id}">${def.spread.toFixed(1)}</span></td>
+    <td><input class="pslider" type="range" min="0.01" max="1" step="0.01" value="${def.bright}"
+      oninput="getPX('${def.id}').bright=+this.value;document.getElementById('vpbright${def.id}').textContent=(+this.value).toFixed(2)">
+      <span class="pval" id="vpbright${def.id}">${def.bright.toFixed(2)}</span></td>
+    <td colspan="4"></td>
+  `;
+  pxtbody.appendChild(tr);
+});
+
+function getPX(id){return PX_DEFS.find(d=>d.id===id);}
+function togPX(id){
+  const d=getPX(id);
+  d.on=!d.on;
+  const btn=document.getElementById('pxon'+id);
+  btn.classList.toggle('on',d.on);
+  btn.textContent=d.on?'ON':'OFF';
+  if(d.on) rebuildPX(id);
+  else if(pxMeshes[id]){scene.remove(pxMeshes[id]);pxMeshes[id]=null;}
+}
+
+// ===== PARTICLE SPAWN =====
+function spawnOne(def){
+  const s=def.spread;
+  const keys=KEYS;
+  const hue=LP[keys[Math.floor(Math.random()*keys.length)]].hue;
+  const base={life:0,maxLife:80+Math.random()*160,hue,x:0,y:0,z:0,vx:0,vy:0,vz:0,angle:0,radius:0,orbitSpd:0};
+  if(def.id==='FLURRY'){
+    base.x=(Math.random()-0.5)*s;base.y=(Math.random()-0.5)*s*0.5-2;base.z=(Math.random()-0.5)*s*0.3;
+    const sp=0.01+Math.random()*0.025;const ag=Math.random()*Math.PI*2;
+    base.vx=Math.cos(ag)*sp*0.25+(Math.random()-0.5)*0.008;
+    base.vy=sp*(0.4+Math.random()*0.6);
+    base.vz=(Math.random()-0.5)*sp*0.15;
+    base.twistX=(Math.random()-0.5)*0.002;base.twistZ=(Math.random()-0.5)*0.002;
+  } else if(def.id==='SPARKS'){
+    base.x=(Math.random()-0.5)*s*0.3;base.y=(Math.random()-0.5)*3;base.z=(Math.random()-0.5)*4;
+    const sp=0.04+Math.random()*0.08;const ag=Math.random()*Math.PI*2;const el=(Math.random()-0.5)*Math.PI;
+    base.vx=Math.cos(ag)*Math.cos(el)*sp;base.vy=Math.sin(el)*sp;base.vz=Math.sin(ag)*Math.cos(el)*sp;
+    base.gravity=-0.0008;base.maxLife=30+Math.random()*60;
+  } else if(def.id==='RAIN'){
+    base.x=(Math.random()-0.5)*s;base.y=8+Math.random()*4;base.z=(Math.random()-0.5)*s*0.4;
+    base.vx=(Math.random()-0.5)*0.005;base.vy=-(0.05+Math.random()*0.08);base.vz=0;
+    base.maxLife=60+Math.random()*80;
+  } else if(def.id==='ORBIT'){
+    base.radius=1+Math.random()*s*0.4;
+    base.angle=Math.random()*Math.PI*2;
+    base.y=(Math.random()-0.5)*s*0.4;
+    base.orbitSpd=(0.02+Math.random()*0.04)*(Math.random()<0.5?1:-1);
+    base.vy=(Math.random()-0.5)*0.008;
+    base.x=Math.cos(base.angle)*base.radius;base.z=Math.sin(base.angle)*base.radius;
+    base.maxLife=100+Math.random()*200;
+  } else if(def.id==='BURST'){
+    base.x=(Math.random()-0.5)*2;base.y=(Math.random()-0.5)*2;base.z=(Math.random()-0.5)*2;
+    const sp=0.02+Math.random()*0.06;const ag=Math.random()*Math.PI*2;const el=(Math.random()-0.5)*Math.PI;
+    base.vx=Math.cos(ag)*Math.cos(el)*sp;base.vy=Math.sin(el)*sp*0.5;base.vz=Math.sin(ag)*Math.cos(el)*sp;
+    base.decay=0.97+Math.random()*0.02;base.maxLife=40+Math.random()*80;
+  } else if(def.id==='DRIFT'){
+    base.x=(Math.random()-0.5)*s;base.y=(Math.random()-0.5)*s*0.5;base.z=(Math.random()-0.5)*s*0.4;
+    base.vx=(Math.random()-0.5)*0.015;base.vy=(Math.random()-0.5)*0.004;base.vz=(Math.random()-0.5)*0.006;
+    base.waveA=Math.random()*0.003;base.waveF=0.02+Math.random()*0.04;
+    base.maxLife=120+Math.random()*200;
+  }
+  return base;
+}
+
+function rebuildPX(id){
+  if(pxMeshes[id]){scene.remove(pxMeshes[id]);pxMeshes[id]=null;}
+  const def=getPX(id);
+  if(!def.on) return;
+  const n=def.count;
+  const geo=new THREE.BufferGeometry();
+  const pos=new Float32Array(n*3);
+  const col=new Float32Array(n*3);
+  pxData[id]=[];
+  for(let i=0;i<n;i++){
+    const p=spawnOne(def);
+    p.life=Math.floor(Math.random()*p.maxLife);
+    pxData[id].push(p);
+    pos[i*3]=p.x;pos[i*3+1]=p.y;pos[i*3+2]=p.z;
+    const c=new THREE.Color().setHSL(p.hue/360,0.7,0.75);
+    col[i*3]=c.r;col[i*3+1]=c.g;col[i*3+2]=c.b;
+  }
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const mat=new THREE.PointsMaterial({size:def.size,vertexColors:true,transparent:true,opacity:def.bright,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true});
+  pxMeshes[id]=new THREE.Points(geo,mat);
+  scene.add(pxMeshes[id]);
+}
+
+function updatePX(id){
+  const mesh=pxMeshes[id];if(!mesh) return;
+  const def=getPX(id);
+  const data=pxData[id];if(!data) return;
+  mesh.material.opacity=def.bright;
+  mesh.material.size=def.size;
+  const pos=mesh.geometry.attributes.position.array;
+  const col=mesh.geometry.attributes.color.array;
+  data.forEach((p,i)=>{
+    p.life++;
+    if(def.id==='FLURRY'){
+      p.vx+=p.twistX+Math.sin(p.life*0.05)*0.0008;
+      p.vz+=p.twistZ+Math.cos(p.life*0.07)*0.0006;
+      p.vy*=0.999;
+      p.x+=p.vx*def.spd*pxSpeedMult;p.y+=p.vy*def.spd*pxSpeedMult;p.z+=p.vz*def.spd*pxSpeedMult;
+    } else if(def.id==='SPARKS'){
+      p.vy+=p.gravity||0;
+      p.x+=p.vx*def.spd*pxSpeedMult;p.y+=p.vy*def.spd*pxSpeedMult;p.z+=p.vz*def.spd*pxSpeedMult;
+    } else if(def.id==='RAIN'){
+      p.x+=p.vx*def.spd*pxSpeedMult;p.y+=p.vy*def.spd*pxSpeedMult;p.z+=p.vz*def.spd*pxSpeedMult;
+    } else if(def.id==='ORBIT'){
+      p.angle+=p.orbitSpd*def.spd*pxSpeedMult;
+      p.y+=p.vy*def.spd*pxSpeedMult;
+      p.x=Math.cos(p.angle)*p.radius;p.z=Math.sin(p.angle)*p.radius;
+    } else if(def.id==='BURST'){
+      p.vx*=(p.decay||0.98);p.vy*=(p.decay||0.98);p.vz*=(p.decay||0.98);
+      p.x+=p.vx*def.spd*pxSpeedMult;p.y+=p.vy*def.spd*pxSpeedMult;p.z+=p.vz*def.spd*pxSpeedMult;
+    } else if(def.id==='DRIFT'){
+      p.vx+=Math.sin(p.life*(p.waveF||0.03))*p.waveA;
+      p.x+=p.vx*def.spd*pxSpeedMult;p.y+=p.vy*def.spd*pxSpeedMult;p.z+=p.vz*def.spd*pxSpeedMult;
+    }
+    const dead=p.life>p.maxLife||p.y>15||p.y<-12||Math.abs(p.x)>20||Math.abs(p.z)>20;
+    if(dead){const np=spawnOne(def);Object.assign(p,np);}
+    pos[i*3]=p.x;pos[i*3+1]=p.y;pos[i*3+2]=p.z;
+    const lr=p.life/p.maxLife;
+    const fade=lr<0.12?lr/0.12:lr>0.75?(1-lr)/0.25:1;
+    const c=new THREE.Color().setHSL(p.hue/360,0.65,0.55+fade*0.25);
+    col[i*3]=c.r*fade;col[i*3+1]=c.g*fade;col[i*3+2]=c.b*fade;
+  });
+  mesh.geometry.attributes.position.needsUpdate=true;
+  mesh.geometry.attributes.color.needsUpdate=true;
+}
+PX_DEFS.forEach(d=>{if(d.on) rebuildPX(d.id);});
+
+// ===== LIGHT PANEL UI =====
+const tbody = document.getElementById('ptable');
+KEYS.forEach(k=>{
+  const p=LP[k];const def=LIGHT_DEFS[k];
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td class="lc"><span class="lname" style="color:${COLORS[k]}">${def.label}</span></td>
+    <td><button class="tbtn on" id="ton${k}" onclick="tog('${k}')">ON</button></td>
+    <td><input class="pslider" type="range" min="2" max="30" step="0.5" value="${p.len}"
+      oninput="LP['${k}'].len=+this.value;rebuildLight('${k}');document.getElementById('vlen${k}').textContent=(+this.value).toFixed(1)">
+      <span class="pval" id="vlen${k}">${p.len.toFixed(1)}</span></td>
+    <td><input class="pslider" type="range" min="0.001" max="0.02" step="0.001" value="${p.spd}"
+      oninput="onSlider('${k}','spd',+this.value,'vspd${k}','toFixed3')">
+      <span class="pval" id="vspd${k}">${p.spd.toFixed(3)}</span></td>
+    <td><input class="pslider" type="range" min="0.1" max="3" step="0.1" value="${p.br}"
+      oninput="onSlider('${k}','br',+this.value,'vbr${k}','toFixed1',true)">
+      <span class="pval" id="vbr${k}">${p.br.toFixed(1)}</span></td>
+    <td><input class="pslider" type="range" min="0" max="360" step="1" value="${p.hue}"
+      oninput="onSlider('${k}','hue',+this.value,'vhue${k}','round',true)">
+      <span class="pval" id="vhue${k}">${p.hue}</span></td>
+    <td><input class="pslider" type="range" min="0" max="2" step="0.05" value="${p.bright}"
+      oninput="onSlider('${k}','bright',+this.value,'vbright${k}','toFixed2')">
+      <span class="pval" id="vbright${k}">${p.bright.toFixed(2)}</span></td>
+    <td><input class="pslider" type="range" min="0" max="1.0" step="0.05" value="${p.blink}"
+      oninput="onSlider('${k}','blink',+this.value,'vblink${k}','toFixed2')">
+      <span class="pval" id="vblink${k}">${p.blink.toFixed(2)}</span></td>
+    <td><input class="pslider" type="range" min="0" max="1" step="0.01" value="0"
+      oninput="LP['${k}'].syncGroup=+this.value;document.getElementById('vsync${k}').textContent=(+this.value).toFixed(2)">
+      <span class="pval" id="vsync${k}">0.00</span></td>
+    <td><button class="tbtn" id="tauto${k}" onclick="togAuto('${k}')">AUTO</button></td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// ===== SYNC LOCK =====
+const SYNC_LOCK={spd:false,br:false,hue:false,bright:false,blink:false};
+
+function toggleSyncLock(param){
+  SYNC_LOCK[param]=!SYNC_LOCK[param];
+  const btn=document.getElementById('syncbtn_'+param);
+  btn.classList.toggle('on',SYNC_LOCK[param]);
+  if(SYNC_LOCK[param]) syncAll(param);
+}
+
+// Common slider handler
+// fmt: 'toFixed1' / 'toFixed2' / 'toFixed3' / 'round'
+// rebuild: call rebuildLight() when true
+function onSlider(k, param, val, labelId, fmt, rebuild){
+  LP[k][param]=val;
+  if(rebuild) rebuildLight(k);
+  const disp=fmt==='round'?Math.round(val):fmt==='toFixed1'?val.toFixed(1):fmt==='toFixed3'?val.toFixed(3):val.toFixed(2);
+  document.getElementById(labelId).textContent=disp;
+  // If L1 is moved with SYNC locked, propagate to all lights
+  if(k==='L1'&&SYNC_LOCK[param]){
+    KEYS.filter(x=>x!=='L1').forEach(x=>{
+      LP[x][param]=val;
+      if(rebuild) rebuildLight(x);
+      const inp=document.querySelector(`#ptable input[oninput*="onSlider('${x}','${param}"]`);
+      if(inp) inp.value=val;
+      const vid=labelId.replace('L1',x);
+      const el=document.getElementById(vid);
+      if(el) el.textContent=disp;
+    });
+  }
+}
+
+function syncAll(param){
+  const base=LP['L1'][param];
+  const needRebuild=(param==='hue'||param==='br');
+  KEYS.forEach(k=>{
+    LP[k][param]=base;
+    if(needRebuild) rebuildLight(k);
+    const inp=document.querySelector(`#ptable input[oninput*="onSlider('${k}','${param}"]`);
+    if(inp) inp.value=base;
+    const fmtMap={spd:'toFixed3',br:'toFixed1',hue:'round',bright:'toFixed2',blink:'toFixed2'};
+    const fmt=fmtMap[param]||'toFixed2';
+    const disp=fmt==='round'?Math.round(base):fmt==='toFixed1'?base.toFixed(1):fmt==='toFixed3'?base.toFixed(3):base.toFixed(2);
+    const labelId='v'+param+k;
+    const el=document.getElementById(labelId);
+    if(el) el.textContent=disp;
+  });
+}
+function togAuto(k){LP[k].auto=!LP[k].auto;document.getElementById('tauto'+k).classList.toggle('on',LP[k].auto);if(LP[k].auto)setNewAutoTarget(k);}
+function setNewAutoTarget(k){AUTO_TARGET[k]={spd:Math.random()*0.018+0.002,br:Math.random()*2.5+0.2,hue:Math.random()*360,bright:Math.random()*1.8+0.2,blink:Math.random()*0.5};LP[k]._autoT=0;}
+function updateAuto(k){
+  if(!LP[k].auto) return;
+  const p=LP[k];const tgt=AUTO_TARGET[k];const s=0.003;
+  p._autoT=(p._autoT||0)+1;
+  p.spd+=(tgt.spd-p.spd)*s;p.br+=(tgt.br-p.br)*s;p.bright+=(tgt.bright-p.bright)*s;p.blink+=(tgt.blink-p.blink)*s;
+  const dh=((tgt.hue-p.hue+540)%360)-180;p.hue=(p.hue+dh*s+360)%360;
+  if(p._autoT>180+Math.random()*120){setNewAutoTarget(k);rebuildLight(k);}
+  const setSl=(sf,v)=>{const r=document.querySelector(`#ptable input[oninput*="LP['${k}'].${sf}"]`);if(r)r.value=v;};
+  setSl('spd',p.spd);setSl('br',p.br);setSl('hue',p.hue);setSl('bright',p.bright);setSl('blink',p.blink);
+  document.getElementById('vspd'+k).textContent=p.spd.toFixed(3);
+  document.getElementById('vbr'+k).textContent=p.br.toFixed(1);
+  document.getElementById('vhue'+k).textContent=Math.round(p.hue);
+  document.getElementById('vbright'+k).textContent=p.bright.toFixed(2);
+  document.getElementById('vblink'+k).textContent=p.blink.toFixed(1);
+}
+
+// ===== BUILD LIGHTS =====
+const lightGroups = {};
+function makeBeam(def,hue,br){
+  const pivot=new THREE.Group();
+  const beamLen=def.beamLen;const isUp=def.upward||false;const isFwd=def.forward||false;
+  const rTop=isFwd?0.01:(isUp?br:0.01);const rBot=isFwd?br:(isUp?0.01:br);
+  const geo=new THREE.CylinderGeometry(rTop,rBot,beamLen,20,10,true);
+  const posArr=geo.attributes.position;const cols=new Float32Array(posArr.count*3);const col=new THREE.Color();
+  for(let i=0;i<posArr.count;i++){
+    const yy=posArr.getY(i);
+    const t=isUp?Math.max(0,Math.min(1,(-yy+beamLen/2)/beamLen)):Math.max(0,Math.min(1,(yy+beamLen/2)/beamLen));
+    col.setHSL(hue/360,t>0.7?Math.max(0,1-(t-0.7)*3):0.88,Math.min(0.82,0.04+t*0.75));
+    cols[i*3]=col.r;cols[i*3+1]=col.g;cols[i*3+2]=col.b;
+  }
+  geo.setAttribute('color',new THREE.BufferAttribute(cols,3));
+  const cone=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:0.72,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));
+  if(isFwd){cone.rotation.x=-Math.PI/2;cone.position.z=beamLen/2;}else{cone.position.y=isUp?beamLen/2:-beamLen/2;}
+  pivot.add(cone);
+  const glowY=isUp?beamLen:-beamLen;const glowZ=isFwd?beamLen:0;
+  [[0.1,0.99],[0.4,0.93],[1.1,0.82],[2.3,0.70]].forEach(([r,l])=>{
+    const m=new THREE.Mesh(new THREE.SphereGeometry(r,12,12),new THREE.MeshBasicMaterial({color:new THREE.Color().setHSL(hue/360,0.45,l),transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false}));
+    isFwd?m.position.z=glowZ:m.position.y=glowY;pivot.add(m);
+  });
+  pivot.add(new THREE.Mesh(new THREE.SphereGeometry(0.075,8,8),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.85,blending:THREE.AdditiveBlending,depthWrite:false})));
+  pivot.userData={smoothFP:0};return pivot;
+}
+function makeGroup(k){
+  const def=LIGHT_DEFS[k];const p=LP[k];
+  const defWithLen={...def,beamLen:p.len||def.beamLen};
+  const group=new THREE.Group();const n=def.count;const beams=[];
+  for(let i=0;i<n;i++){
+    const beam=makeBeam(defWithLen,p.hue,p.br);
+    const xOff=n>1?(i/(n-1)-0.5)*defWithLen.spread:0;
+    if(defWithLen.sideRight||defWithLen.sideLeft){beam.position.y=xOff;}else if(def.sweepAxes==='yz'){beam.position.z=xOff;}else{beam.position.x=xOff;}
+    beam.rotation.set(def.initRot[0],def.initRot[1],def.initRot[2]);
+    beam.userData.phaseOffset=(i/(n||1))*Math.PI*2;beam.userData.smoothFP=0;beams.push(beam);group.add(beam);
+  }
+  group.position.set(...defWithLen.pos);group.userData={beams,def:defWithLen,phase:0,blinkPhase:0};return group;
+}
+function rebuildLight(k){
+  const ph=lightGroups[k]?lightGroups[k].userData.phase:0;
+  const bp=lightGroups[k]?lightGroups[k].userData.blinkPhase:0;
+  if(lightGroups[k]) scene.remove(lightGroups[k]);
+  const g=makeGroup(k);g.userData.phase=ph;g.userData.blinkPhase=bp;g.userData.offsetPhase=0;scene.add(g);lightGroups[k]=g;
+}
+KEYS.forEach(k=>rebuildLight(k));
+['L4','L5','L6'].forEach(k=>{
+  setTimeout(()=>{
+    const btn=document.getElementById('ton'+k);
+    if(btn) btn.classList.remove('on');
+    const pb=document.getElementById('pb_'+k);
+    if(pb) pb.classList.remove('on');
+  },100);
+});
+
+function applyFlare(beam,rawFP,bright,blinkVal){
+  const thr=0.70;const sharpFP=rawFP>thr?Math.pow((rawFP-thr)/(1-thr),1.6):0;
+  const prev=beam.userData.smoothFP||0;beam.userData.smoothFP=prev+(sharpFP-prev)*(sharpFP>prev?0.28:0.07);
+  const fp=beam.userData.smoothFP;
+  const finalOp=(0.15+fp*0.8)*bright*blinkVal;
+  beam.children[0].material.opacity=Math.min(0.95,Math.max(0,finalOp));
+  [1,2,3,4].forEach(ci=>{const g=beam.children[ci];if(!g?.material)return;g.material.opacity=0;g.scale.setScalar(1);});
+  return fp;
+}
+
+let pxSpeedMult=1.0;
+
+// ===== AUDIO ENGINE =====
+let audioCtx=null,analyser=null,audioSrc=null,audioEl=null,freqData=null;
+let bassVal=0,midVal=0,highVal=0;
+
+const vuCont=document.getElementById('vubars');
+const VU_N=12;const vuEls=[];
+const vuColors=['#ff4422','#ff6622','#ff9922','#ffcc22','#ddee22','#aaee33','#66ee55','#33dd88','#22ccaa','#22aacc','#2288ee','#6644ff'];
+for(let i=0;i<VU_N;i++){
+  const b=document.createElement('div');b.className='vubar';
+  vuCont.appendChild(b);vuEls.push(b);
+}
+
+function loadAudioFile(file){
+  if(!file) return;
+  if(audioEl){audioEl.pause();audioEl.src='';}
+  if(audioSrc) audioSrc.disconnect();
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  analyser=audioCtx.createAnalyser();
+  analyser.fftSize=1024;
+  analyser.smoothingTimeConstant=0.8;
+  freqData=new Uint8Array(analyser.frequencyBinCount);
+  analyser.connect(audioCtx.destination);
+  audioEl=new Audio();
+  audioEl.src=URL.createObjectURL(file);
+  audioEl.crossOrigin='anonymous';
+  audioSrc=audioCtx.createMediaElementSource(audioEl);
+  audioSrc.connect(analyser);
+  audioEl.addEventListener('loadedmetadata',()=>{
+    document.getElementById('bplay').disabled=false;
+    document.getElementById('dropzone').classList.add('loaded');
+    document.getElementById('dropzone').textContent='OK '+file.name.substring(0,12);
+    updateTimecode();
+  });
+  audioEl.addEventListener('timeupdate',updateTimecode);
+  audioEl.addEventListener('ended',()=>{
+    document.getElementById('bplay').textContent='PLAY';
+    document.getElementById('bplay').classList.remove('on');
+  });
+}
+function togglePlay(){
+  if(!audioEl) return;
+  if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume();
+  if(audioEl.paused){
+    audioEl.play();
+    document.getElementById('bplay').textContent='PAUSE';
+    document.getElementById('bplay').classList.add('on');
+  } else {
+    audioEl.pause();
+    document.getElementById('bplay').textContent='PLAY';
+    document.getElementById('bplay').classList.remove('on');
+  }
+}
+function setVolume(val){if(audioEl) audioEl.volume=parseFloat(val);}
+function updateTimecode(){
+  if(!audioEl) return;
+  const cur=audioEl.currentTime||0;const dur=audioEl.duration||0;
+  const fmt=s=>Math.floor(s/60)+':'+(Math.floor(s%60)+'').padStart(2,'0');
+  document.getElementById('timecode').textContent=fmt(cur)+' / '+fmt(dur);
+}
+function updateAudio(){
+  if(!analyser||!freqData) return;
+  analyser.getByteFrequencyData(freqData);
+  const bin=analyser.frequencyBinCount;
+  const avg=(a,b)=>{let s=0;for(let i=a;i<b;i++)s+=freqData[i];return s/((b-a)*255);};
+  const rawBass=avg(0,5);const rawMid=avg(5,50);const rawHigh=avg(50,180);
+  const sUp=0.04,sDn=0.02;
+  bassVal+=(rawBass-bassVal)*(rawBass>bassVal?sUp:sDn);
+  midVal+=(rawMid-midVal)*(rawMid>midVal?sUp:sDn);
+  highVal+=(rawHigh-highVal)*(rawHigh>highVal?sUp:sDn);
+  const step=Math.floor(bin/VU_N);
+  vuEls.forEach((el,i)=>{
+    const v=avg(i*step,(i+1)*step);
+    el.style.height=Math.max(1,v*12)+'px';
+    el.style.background=vuColors[i];
+    el.style.opacity=0.3+v*0.7;
+  });
+}
+
+// ===== COMBO (TOGGLE MODE) =====
+// C1/C2/C3: tap to ON (maintained), tap same again to OFF
+// C4 (CHARA): tap to trigger sequence, auto-resets when done
+// Switching to another combo automatically restores previous state first
+const COMBO_STATE={active:null,sparkTimer:null,savedLP:{},savedStop:false};
+
+function comboPress(key){
+  // C4 during sequence: cancel and restore
+  if(key==='CHARA'&&COMBO_STATE.sparkTimer){
+    clearInterval(COMBO_STATE.sparkTimer);COMBO_STATE.sparkTimer=null;
+    stop=COMBO_STATE.savedStop;
+    const b=document.getElementById('bst');
+    b.classList.toggle('stop-on',stop);b.textContent=stop?'STOP':'START';
+    _comboRestore();
+    COMBO_STATE.active=null;
+    document.querySelectorAll('.cbtn').forEach(b=>b.classList.remove('active'));
+    return;
+  }
+
+  // Toggle OFF: same button pressed again
+  if(COMBO_STATE.active===key&&key!=='CHARA'){
+    COMBO_STATE.active=null;
+    document.getElementById('cb_'+key).classList.remove('active');
+    _comboRestore();
+    return;
+  }
+
+  // Switch to new combo: restore previous state first (no flash)
+  if(COMBO_STATE.active&&COMBO_STATE.active!=='CHARA'){
+    _comboRestore();
+  }
+
+  // Activate new combo
+  COMBO_STATE.active=key;
+  document.querySelectorAll('.cbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('cb_'+key).classList.add('active');
+
+  if(key==='C'){
+    _comboSave(KEYS);
+    Object.assign(LP['L1'],{bright:0});
+    Object.assign(LP['L2'],{spd:0.003,bright:0.5});
+    Object.assign(LP['L3'],{bright:0});
+    Object.assign(LP['L4'],{bright:0});
+    Object.assign(LP['L5'],{bright:0});
+    Object.assign(LP['L6'],{bright:0});
+    _setGroupPhase('L2',Math.PI);
+  } else if(key==='G'){
+    _comboSave(KEYS);
+    Object.assign(LP['L1'],{spd:0.006,bright:0.8});
+    Object.assign(LP['L2'],{spd:0.003,bright:0.5});
+    Object.assign(LP['L3'],{bright:0});
+    Object.assign(LP['L4'],{bright:0});
+    Object.assign(LP['L5'],{bright:0});
+    Object.assign(LP['L6'],{bright:0});
+  } else if(key==='CH'){
+    _comboSave(KEYS);
+    Object.assign(LP['L1'],{spd:0.006,bright:0.8});
+    Object.assign(LP['L2'],{spd:0.003,bright:0.5});
+    Object.assign(LP['L3'],{spd:0.003,bright:0.5});
+    Object.assign(LP['L4'],{bright:0});
+    Object.assign(LP['L5'],{bright:0});
+    Object.assign(LP['L6'],{bright:0});
+    _setGroupPhase('L3',Math.PI);
+  } else if(key==='CHARA'){
+    _charaSequence();
+  }
+}
+
+// comboRelease: no-op on mobile (toggle mode)
+function comboRelease(key){}
+
+function _comboSave(keys){
+  // Save stop state too
+  COMBO_STATE.savedStop=stop;
+  keys.forEach(k=>{
+    if(!COMBO_STATE.savedLP[k]) COMBO_STATE.savedLP[k]={...LP[k]};
+  });
+}
+
+function _comboRestore(){
+  // Restore LP values
+  Object.keys(COMBO_STATE.savedLP).forEach(k=>{
+    Object.assign(LP[k],COMBO_STATE.savedLP[k]);
+  });
+  COMBO_STATE.savedLP={};
+  // Restore stop state
+  stop=COMBO_STATE.savedStop;
+  const b=document.getElementById('bst');
+  b.classList.toggle('stop-on',stop);
+  b.textContent=stop?'STOP':'START';
+}
+
+function _setGroupPhase(key,phase){
+  const grp=lightGroups[key];if(grp) grp.userData.phase=phase;
+}
+
+function _charaSequence(){
+  _comboSave(Object.keys(LP));
+  // Freeze all lights at max bright
+  Object.keys(LP).forEach(k=>{LP[k].bright=2.5;LP[k].blink=0;});
+  stop=true;
+  const b=document.getElementById('bst');
+  b.classList.add('stop-on');b.textContent='STOP';
+
+  setTimeout(()=>{
+    // Start animation only if still in CHARA mode
+    if(COMBO_STATE.active!=='CHARA') return;
+    stop=false;
+    b.classList.remove('stop-on');b.textContent='START';
+    let step=0;const steps=Math.round(5000/80);
+    COMBO_STATE.sparkTimer=setInterval(()=>{
+      if(COMBO_STATE.active!=='CHARA'){
+        clearInterval(COMBO_STATE.sparkTimer);COMBO_STATE.sparkTimer=null;
+        return;
+      }
+      step++;const progress=step/steps;
+      Object.keys(LP).forEach(k=>{
+        LP[k].bright=Math.max(0,2.5*(1-progress)+(Math.random()-0.5)*0.4*(1-progress*0.5));
+        LP[k].blink=Math.min(10,progress*8+Math.random()*2);
+      });
+      if(step>=steps){
+        clearInterval(COMBO_STATE.sparkTimer);COMBO_STATE.sparkTimer=null;
+        // Restore everything including stop state
+        _comboRestore();
+        COMBO_STATE.active=null;
+        document.getElementById('cb_CHARA').classList.remove('active');
+      }
+    },80);
+  },3000);
+}
+
+// ===== BROADCAST CHANNEL (send) =====
+const bc = new BroadcastChannel('phisualaizer_channel');
+let bcLastSent = 0;
+function bcSend(){
+  const now = Date.now();
+  if(now - bcLastSent < 50) return; // throttle to 20fps max
+  bcLastSent = now;
+  bc.postMessage({
+    type: 'state',
+    LP: JSON.parse(JSON.stringify(LP)),
+    lOn: {...lOn},
+    slow,
+    stop,
+    PX: PX_DEFS.map(d=>({...d})),
+    CAM: {...CAM}
+  });
+}
+
+// ===== ANIMATION LOOP =====
+function animate(){
+  requestAnimationFrame(animate);
+  KEYS.forEach(k=>updateAuto(k));
+  let maxFP=0;
+  Object.entries(lightGroups).forEach(([k,grp])=>{
+    if(!lOn[k]){grp.visible=false;return;}
+    grp.visible=true;
+    const p=LP[k];
+    const syncKey=p.sync&&p.sync!=='NONE'?p.sync:null;
+    if(!stop){
+      if(syncKey&&lightGroups[syncKey]){
+        const targetPh=lightGroups[syncKey].userData.phase;
+        const diff=targetPh-grp.userData.phase;
+        grp.userData.phase+=diff*0.05+p.spd*(slow?0.1:1)*0.3;
+      } else {
+        grp.userData.phase+=p.spd*(slow?0.1:1);
+      }
+      grp.userData.blinkPhase+=0.016;
+    }
+    const ph=grp.userData.phase;const bp=grp.userData.blinkPhase;
+    const def=grp.userData.def;const sa=def.sweepAxes;
+    // L1 (xz): offsetPhaseによる低速sin波（SPEED/SLOW連動）
+    if(sa==='xz'){
+      grp.userData.offsetPhase=(grp.userData.offsetPhase||0)+p.spd*(slow?0.1:1)*0.15;
+    }
+    const safeBlink=COMBO_STATE.active==='CHARA'?p.blink:Math.min(p.blink,0.5);
+    const blinkVal=safeBlink>0?Math.max(0.0,(Math.sin(bp*safeBlink*2.0)+1.0)*0.5):1.0;
+    grp.userData.beams.forEach(beam=>{
+      const bph=ph+beam.userData.phaseOffset*(1-p.syncGroup);
+      if(def.sideRight){beam.rotation.z=Math.PI/2+Math.sin(bph)*1.8;beam.rotation.x=Math.cos(bph*0.8)*0.7;}
+      else if(def.sideLeft){beam.rotation.z=-Math.PI/2+Math.sin(bph)*1.8;beam.rotation.x=Math.cos(bph*0.8)*0.7;}
+      else if(def.forward){beam.rotation.y=Math.sin(bph)*1.0*(beam.position.x<0?1:-1);beam.rotation.x=Math.cos(bph*0.7)*0.5;}
+      else if(sa==='xz'){const os=Math.sin(grp.userData.offsetPhase||0)*1.2;beam.rotation.x=def.initRot[0]+Math.sin(bph)*1.2;beam.rotation.z=def.initRot[2]+Math.cos(bph*0.8)*1.2+os;}
+      else if(sa==='xy'){
+        const fwdOffset=(k==='L2')?-0.44:(k==='L3')?0.1:0;
+        beam.rotation.x=def.initRot[0]+Math.sin(bph)*1.0+fwdOffset;
+        beam.rotation.y=def.initRot[1]+Math.cos(bph*0.75)*1.0-1.0;
+      }
+      else if(sa==='yz'){beam.rotation.y=def.initRot[1]+Math.sin(bph)*1.0;beam.rotation.z=def.initRot[2]+Math.cos(bph*0.8)*0.8;}
+      const worldPos=new THREE.Vector3();beam.getWorldPosition(worldPos);
+      const bv=def.sideRight?new THREE.Vector3(-1,0,0):def.sideLeft?new THREE.Vector3(1,0,0):def.forward?new THREE.Vector3(0,0,1):def.upward?new THREE.Vector3(0,1,0):new THREE.Vector3(0,-1,0);
+      bv.applyEuler(beam.rotation);
+      const toCam=camera.position.clone().sub(worldPos).normalize();
+      const rawFP=Math.max(0,bv.dot(toCam));
+      const fp=applyFlare(beam,rawFP,p.bright,blinkVal);
+      if(fp>maxFP) maxFP=fp;
+    });
+  });
+  updateAudio();
+  const audioActive=analyser&&audioEl&&!audioEl.paused;
+  if(audioActive){
+    PX_DEFS.forEach(d=>{
+      if(!d.on) return;
+      const mesh=pxMeshes[d.id];if(!mesh) return;
+      mesh.material.opacity=Math.min(1,d.bright*(1+bassVal*2.5));
+      mesh.material.size=d.size*(1+highVal*1.5);
+    });
+  }
+  PX_DEFS.forEach(d=>{if(d.on) updatePX(d.id);});
+  if(maxFP>0.55) renderer.setClearColor(new THREE.Color(0x000a1b).lerp(new THREE.Color(0x0c1e3a),(maxFP-0.55)*0.45),1);
+  else renderer.setClearColor(0x000a1b,1);
+  renderer.render(scene,camera);
+  bcSend();
+}
+animate();
+</script>
